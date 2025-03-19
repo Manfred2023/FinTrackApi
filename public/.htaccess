@@ -1,0 +1,33 @@
+<IfModule mod_security.c>
+    SecFilterEngine Off
+    SecFilterScanPOST Off
+</IfModule>
+# Forcer HTTPS (à mettre en premier)
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=307,L]
+
+# Configuration CORS (doit être appliquée même pendant la redirection HTTPS)
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Origin, Content-Type, Accept, Authorization, X-Request-With"
+    Header always set Access-Control-Max-Age "3600"
+</IfModule>
+
+# Gérer OPTIONS pre-flight proprement
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^$ - [R=204,NC,L]
+</IfModule>
+
+# Autoriser les requêtes OPTIONS via SetEnvIf
+SetEnvIf Request_Method OPTIONS Access-Control-Allow-Origin=*
+
+# Règles normales de réécriture
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+
