@@ -1,8 +1,12 @@
 <?php
 
 namespace App\Controllers;
+use App\Models\User;
 use App\Services\UserService;
+use Helper\Constant;
+use Helper\Criteria;
 use Helper\Reply;
+use JetBrains\PhpStorm\NoReturn;
 
 class UserController
 {
@@ -13,68 +17,31 @@ class UserController
         $this->userService = new UserService();
     }
 
-    public function saveUser()
+    /**
+     * @throws \Exception
+     */
+    public function saveUser(): void
     {
         $data = json_decode(file_get_contents("php://input"), true);
 
-        if (!isset($data['nickname'], $data['email'],$data['mobile'],$data['pin'],  )) {
-             Reply::_error('fields missing',code: 400);
-        }
-        if($data['token'] != null ){
-            $userId = $this->userService->createUser($data['token'],$data['nickname'], $data['email'],$data['mobile'], $data['pin'],);
+        Criteria::_formRequiredCheck([Constant::TOKEN,Constant::NICKNAME, Constant::EMAIL, Constant::MOBILE, Constant::PIN, ], $data);
+
+        $userCheck = new User(null, $data[Constant::TOKEN],$data[Constant::NICKNAME],$data[Constant::MOBILE],$data[Constant::EMAIL],$data[Constant::PIN],false,false);
+        if($userCheck->getToken() != null ){
+            $result = $this->userService->getUserByToken((int)$userCheck->getToken());
+            if(!$result instanceof User) Reply::_error('user_not_found',code: 404);
+
+            $result->setNickname($userCheck->getNickname());
+            $result->setMobile($userCheck->getMobile());
+            $result->setEmail($userCheck->getEmail());
+
+            $userUpdate = $this->userService->saveUser($result);
+            Reply::_success($userUpdate->toArray());
 
         }else{
-            $userId = $this->userService->createUser($data['token'],$data['nickname'], $data['email'],$data['mobile'], $data['pin'],);
+            $userId = $this->userService->saveUser($userCheck);
+            Reply::_success($userId->toArray());
         }
 
-        Reply::_success($userId->toArray());
-
-    }
-
-    public function getUser($id)
-    {
-        $user = $this->userService->getUserById($id);
-
-        if (!$user) {
-            http_response_code(404);
-            echo json_encode(["error" => "Utilisateur non trouvé"]);
-            return;
-        }
-
-        echo json_encode([
-            "id" => $user->getId(),
-            "nickname" => $user->getNickname(),
-            "email" => $user->getEmail(),
-            "admin" => $user->getAdmin(),
-            "blocked" => $user->getBlocked()
-        ]);
-    }
-
-    public function getAllUsers()
-    {
-        $users = $this->userService->getAllUsers();
-        echo json_encode($users);
-    }
-
-    public function updateUser($id)
-    {
-        $data = json_decode(file_get_contents("php://input"), true);
-
-        if ($this->userService->updateUser($id, $data)) {
-            echo json_encode(["message" => "Utilisateur mis à jour"]);
-        } else {
-            http_response_code(400);
-            echo json_encode(["error" => "Échec de la mise à jour"]);
-        }
-    }
-
-    public function deleteUser($id)
-    {
-        if ($this->userService->deleteUser($id)) {
-            echo json_encode(["message" => "Utilisateur supprimé"]);
-        } else {
-            http_response_code(400);
-            echo json_encode(["error" => "Échec de la suppression"]);
-        }
     }
 }

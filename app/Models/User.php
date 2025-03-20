@@ -127,7 +127,7 @@ class User
         return [
             'token' => $this->token ?? null,
             'nickname' => $this->nickname,
-            'mobile' => $this->mobile ?? null,
+            'mobile' => (int)$this->mobile ?? null,
             'email' => $this->email,
             'pin' => $this->pin,
             'admin' => $this->admin,

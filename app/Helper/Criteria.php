@@ -13,14 +13,6 @@ use Exception;
 
 class Criteria
 {
-    const ID = 0;
-    const TOKEN = 1;
-    const USER = 20;
-    const UUID = 17;
-    const MOBILE = 27;
-    const TOWN = 27;
-
-    const NAME = 30;
 
     /**
      * @param array|null $fields
@@ -31,11 +23,13 @@ class Criteria
     static public function _formRequiredCheck(?array $fields, ?array $request): void
     {
         if (empty($request))
-            throw new Exception("Empty request not accepted here!");
+            Reply::_error("Empty request not accepted here!",code: 400);
+
 
         foreach ($fields as $field)
             if (!array_key_exists($field, $request))
-                throw new Exception("{$field} missing in your request!");
+                Reply::_error("{$field} missing in your request!",code: 400);
+                //throw new Exception("{$field} missing in your request!");
 
     }
 

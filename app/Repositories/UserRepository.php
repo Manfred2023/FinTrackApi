@@ -3,30 +3,36 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use Helper\Reply;
+use Helper\Constant;
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
 use RedBeanPHP\RedException\SQL;
 
 class UserRepository
 {
+    protected const TABLE = 'user';
     /**
      * @throws SQL
      */
-    public function create(User $user): ?User
+    public function saveUser(User $user): ?User
     {
-        $userBean = R::dispense('user');
-        $userBean->token = self::shortToken();
-        $userBean->nickname = $user->getNickname();
-        $userBean->email = $user->getEmail();
-        $userBean->mobile = $user->getMobile();
-        $userBean->pin = $user->getPin();
-        $userBean->admin = $user->getAdmin();
-        $userBean->blocked = $user->getBlocked();
+        $userBean = ($update = (int)$user->getId() > 0)
+            ? R::loadForUpdate(self::TABLE, $user->getId())
+            : R::dispense(self::TABLE);
 
-        $lastID = R::store($userBean);
+        if (!$update) {
+            $userBean->{Constant::TOKEN} =  self::shortToken();
+        }
+        $userBean->{Constant::NICKNAME} = $user->getNickname();
+        $userBean->{Constant::EMAIL} = $user->getEmail();
+        $userBean->{Constant::MOBILE} = $user->getMobile();
+        $userBean->{Constant::PIN} = $user->getPin();
+        $userBean->{Constant::ADMIN} = $user->getAdmin();
+        $userBean->{Constant::BLOCKED} = $user->getBlocked();
 
-        return $lastID > 0 ? self::_toObject($lastID) : null;
+        $lastCID = R::store($userBean);
+
+        return $lastCID > 0 ? self::_toObject(R::load(self::TABLE, $lastCID)) : null;
     }
 
     static protected function shortToken(): int
@@ -34,98 +40,57 @@ class UserRepository
         do {
             $nextToken = R::getCell("SELECT MAX(token) FROM user") ?: 100000;
             $nextToken++;
-            $exists = R::count('user', 'token = ?', [$nextToken]);
-        } while ($exists > 0); // S'assure que le token est unique
+            $exists = R::count(self::TABLE, 'token = ?', [$nextToken]);
+        } while ($exists > 0);
 
         return $nextToken;
     }
 
     protected static function _toObject(?OODBBean $bean): ?User
     {
-        $bean = R::load('user', $id);
-
-        if ($bean->id === 0) {
+        if (!$bean instanceof OODBBean)
             return null;
+        if (!empty($vars = $bean->export())) {
+            return new User(
+                $vars[Constant::ID] ?? null,
+                $vars[Constant::TOKEN] ?? null,
+                $vars[Constant::NICKNAME] ,
+                $vars[Constant::MOBILE] ,
+                $vars[Constant::EMAIL],
+                $vars[Constant::PIN],
+                $vars[Constant::ADMIN] ?? null,
+                $vars[Constant::BLOCKED] ?? null
+            );
         }
+        return null;
 
-        $vars = $bean->export();
 
-        return new User(
-            $vars['id'],
-            $vars['token'] ?? null,
-            $vars['nickname'],
-            $vars['mobile'] ?? null,
-            $vars['email'],
-            $vars['pin'],
-            $vars['admin'],
-            $vars['blocked']
-        );
+
     }
 
 
     public function findById(int $id): ?User
     {
-        $userBean = R::findOne('user', 'id = ?', [$id]);
-        if ($userBean) {
-            return new User(
-                null,
-                null,
-                $userBean->nickname,
-                $userBean->mobile,
-                $userBean->email,
-                $userBean->pin,
-                $userBean->admin,
-                $userBean->blocked
-            );
-        }
+        $userBean = R::findOne(self::TABLE, 'id = ?', [$id]);
+
         return null;
     }
-    public function findByToken(int $token): ?User
+    public function findByToken(string $token): ?User
     {
-        $userBean = R::findOne('user', 'token = ?', [$token]);
-        $result = self::_toObject($userBean)
-        if ($userBean) {
-            return new User(
-                null,
-                null,
-                $userBean->nickname,
-                $userBean->mobile,
-                $userBean->email,
-                $userBean->pin,
-                $userBean->admin,
-                $userBean->blocked
-            );
-        }
-        return null;
+        $userBean = R::findOne(self::TABLE, 'token = ?', [$token]);
+
+        return ($userBean) ? self::_toObject($userBean) : null;
     }
 
     public function findAll(): array
     {
-
-        return R::findAll('users');
-    }
-
-    public function update(int $id, array $data): bool
-    {
-        $user = R::load('users', $id);
-        if ($user->id) {
-            foreach ($data as $key => $value) {
-                if ($key === 'pin') {
-                    $user->$key = password_hash($value, PASSWORD_DEFAULT);
-                } else {
-                    $user->$key = $value;
-                }
-            }
-            R::store($user);
-            return true;
-        }
-        return false;
+        return R::findAll(self::TABLE);
     }
 
     public function delete(int $id): bool
     {
-        $user = R::load('users', $id);
-        if ($user->id) {
+        $user = R::load(self::TABLE, $id);
+        if ($user->getID()) {
             R::trash($user);
             return true;
         }
