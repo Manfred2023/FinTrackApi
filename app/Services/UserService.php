@@ -27,6 +27,11 @@ class UserService
     {
         return $this->userRepository->findByToken($token);
     }
+    public  function getUserByMobileOrEmail(?int $mobile,?string $email)
+    {
+        return $this->userRepository->getUserByMobileOrEmail($mobile,$email);
+    }
+
 
 
 }

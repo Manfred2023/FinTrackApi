@@ -1,8 +1,8 @@
 <?php
 
-namespace Middlewares;
+namespace App\Middlewares;
 
-class CorsMiddleware
+class CorsMiddlewares
 {
     public static function handle()
     {

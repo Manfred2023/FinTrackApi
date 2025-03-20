@@ -68,24 +68,24 @@ class UserRepository
 
     }
 
-
-    public function findById(int $id): ?User
-    {
-        $userBean = R::findOne(self::TABLE, 'id = ?', [$id]);
-
-        return null;
-    }
     public function findByToken(string $token): ?User
     {
         $userBean = R::findOne(self::TABLE, 'token = ?', [$token]);
 
         return ($userBean) ? self::_toObject($userBean) : null;
     }
-
-    public function findAll(): array
+    public function getUserByMobileOrEmail(?int $mobile,?string $email): ?User
     {
-        return R::findAll(self::TABLE);
+        if($mobile != null){
+            $userBean = R::findOne(self::TABLE, 'mobile = ?', [$mobile]);
+        }else{
+            $userBean = R::findOne(self::TABLE, 'email = ?', [$email]);
+        }
+        return ($userBean) ? self::_toObject($userBean) : null;
+
     }
+
+
 
     public function delete(int $id): bool
     {

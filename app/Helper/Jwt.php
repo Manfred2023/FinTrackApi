@@ -9,7 +9,6 @@
  */
 
 namespace Helper;
-use lib\utilities\Exception;
 
 class Jwt
 {
@@ -72,7 +71,7 @@ class Jwt
     }
 
     // Génère le JWT complet
-    public function encode(string $clientId, int $validityInSeconds = 86400): string
+    public function encode(?string $clientId, int $validityInSeconds = 86400): string
     {
         $header = $this->createHeader();
         $payload = $this->createPayload($clientId, $validityInSeconds);
