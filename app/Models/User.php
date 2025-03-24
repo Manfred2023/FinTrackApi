@@ -10,6 +10,11 @@
 
 
 namespace App\Models;
+use Exception;
+use Helper\Constant;
+use Helper\Helper;
+use Helper\Reply;
+
 class User
 {
     private ?int $id;
@@ -125,15 +130,43 @@ class User
     public function toArray(): array
     {
         return [
-            'token' => $this->token ?? null,
-            'nickname' => $this->nickname,
-            'mobile' => (int)$this->mobile ?? null,
-            'email' => $this->email,
-            'pin' => $this->pin,
-            'admin' => $this->admin,
-            'blocked' => $this->blocked,
+            Constant::TOKEN => $this->token ?? null,
+            Constant::NICKNAME => $this->nickname,
+            Constant::MOBILE => (int)$this->mobile ?? null,
+            Constant::EMAIL => $this->email,
+            Constant::PIN => $this->pin,
+            Constant::ADMIN => $this->admin,
+            Constant::BLOCKED => $this->blocked,
         ];
     }
+
+    /**
+     * @param User $user
+     * @return void
+     * @throws Exception
+     */
+    static public function validateUser(self $user): void
+    {
+        $errors = [];
+
+        if (strlen($user->getPin()) !== 4) {
+            $errors[] = Constant::INVALID_PIN;
+        }
+        if (strlen($user->getNickname()) > 50) {
+            $errors[] = Constant::INVALID_NAME;
+        }
+        if (!Helper::isEmailFormatValid($user->getEmail())) {
+            $errors[] = Constant::INVALID_EMAIL;
+        }
+        if (!Helper::isCameroonianPhoneNumber($user->getMobile())) {
+            $errors[] = Constant::INVALID_MOBILE;
+        }
+
+        if (!empty($errors)) {
+            Reply::_error($errors,code: 400);
+        }
+    }
+
 
 
 }

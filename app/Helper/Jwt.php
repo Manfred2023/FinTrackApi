@@ -10,6 +10,8 @@
 
 namespace Helper;
 
+use Exception;
+
 class Jwt
 {
     private string $key;
@@ -119,7 +121,7 @@ class Jwt
             }
 
             // Vérifie l'application
-            if (!isset($decodedPayload['app']) || $decodedPayload['app'] !== "BuildTrack") {
+            if (!isset($decodedPayload['app']) || $decodedPayload['app'] !== "FinTrack") {
                 error_log("Invalid application");
                 return null;
             }

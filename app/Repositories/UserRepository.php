@@ -10,7 +10,7 @@ use RedBeanPHP\RedException\SQL;
 
 class UserRepository
 {
-    protected const TABLE = 'user';
+    protected const TABLE = Constant::USER;
     /**
      * @throws SQL
      */
@@ -71,6 +71,12 @@ class UserRepository
     public function findByToken(string $token): ?User
     {
         $userBean = R::findOne(self::TABLE, 'token = ?', [$token]);
+
+        return ($userBean) ? self::_toObject($userBean) : null;
+    }
+    public function findById(string $id): ?User
+    {
+        $userBean = R::findOne(self::TABLE, 'id = ?', [$id]);
 
         return ($userBean) ? self::_toObject($userBean) : null;
     }

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use Helper\Reply;
 use App\Repositories\UserRepository;
 use RedBeanPHP\RedException\SQL;
 
@@ -23,11 +22,11 @@ class UserService
     {
         return $this->userRepository->saveUser($user);
     }
-    public  function getUserByToken(int $token)
+    public  function getUserByToken(int $token): ?User
     {
         return $this->userRepository->findByToken($token);
     }
-    public  function getUserByMobileOrEmail(?int $mobile,?string $email)
+    public  function getUserByMobileOrEmail(?int $mobile,?string $email): ?User
     {
         return $this->userRepository->getUserByMobileOrEmail($mobile,$email);
     }

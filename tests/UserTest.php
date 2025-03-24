@@ -2,7 +2,7 @@
 
 namespace tests;
 
-class UserTest
+class main
 {
 
 }

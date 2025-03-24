@@ -2,26 +2,34 @@
 
 namespace App\Controllers;
 
+use App\Models\Account;
 use App\Models\User;
+use App\Services\AccountService;
 use App\Services\UserService;
 use Helper\Constant;
 use Helper\Criteria;
 use Helper\Helper;
 use Helper\Reply;
+use JetBrains\PhpStorm\NoReturn;
+use RedBeanPHP\RedException\SQL;
 
 class UserController
 {
     private UserService $userService;
+    private AccountService $accountService;
 
     public function __construct()
     {
         $this->userService = new UserService();
+        $this->accountService = new AccountService();
     }
 
     /**
+     * @return void
+     * @throws SQL
      * @throws \Exception
      */
-    public function saveUser(): void
+    #[NoReturn] public function saveUser(): void
     {
         $data = json_decode(file_get_contents("php://input"), true);
 
@@ -33,85 +41,60 @@ class UserController
             Constant::PIN,
         ], $data);
 
-        $this->validateUserData($data);
 
         $user = new User(null, $data[Constant::TOKEN],$data[Constant::NICKNAME],$data[Constant::MOBILE],$data[Constant::EMAIL],$data[Constant::PIN],false,false);
 
+        User::validateUser($user);
 
         if ($user->getToken()) {
             $existingUser = $this->userService->getUserByToken((int)$user->getToken());
 
             if (!$existingUser instanceof User) {
-                Reply::_error('user_not_found', 404);
+                Reply::_error(Constant::USER_NOT_FOUND, 404);
             }
 
             $existingUser->setNickname($user->getNickname());
-            $existingUser->setMobile($user->getMobile());
-            $existingUser->setEmail($user->getEmail());
             $existingUser->setPin($user->getPin());
 
             $userUpdate = $this->userService->saveUser($existingUser);
             Reply::_success($userUpdate->toArray());
         } else {
+            $checkUserByMobile = $this->userService->getUserByMobileOrEmail($user->getMobile(), null);
+            if($checkUserByMobile instanceof User) Reply::_error(Constant::MOBILE_ALREADY_USED);
+
+            $checkUserByEmail = $this->userService->getUserByMobileOrEmail(null,  $user->getEmail());
+            if($checkUserByEmail instanceof User) Reply::_error(Constant::EMAIL_ALREADY_USED);
+
             $savedUser = $this->userService->saveUser($user);
-            Reply::_success($savedUser->toArray());
+            $account = new Account(null,null,0,$savedUser);
+            $this->accountService->createAccount($account);
+            Reply::_success($savedUser->toArray(),code: 201);
         }
     }
 
     /**
+     * @return void
      * @throws \Exception
      */
-    public function authUser(): void
+    #[NoReturn] public function authUser(): void
     {
         $data = json_decode(file_get_contents("php://input"), true);
 
         Criteria::_formRequiredCheck([Constant::EMAIL, Constant::MOBILE, Constant::PIN], $data);
 
-        $user = $this->getUserByEmailOrMobile($data);
+        if($data[Constant::EMAIL] != null){
+            $user = $this->userService->getUserByMobileOrEmail(null, $data[Constant::EMAIL]);
+        } else{
+            $user = $this->userService->getUserByMobileOrEmail($data[Constant::MOBILE], null);
+        }
+
 
         if (!$user || $user->getPin() !== $data[Constant::PIN]) {
-            Reply::_error('auth_failed', 401);
+            Reply::_error(Constant::AUTHENTICATION_FAILED, 401);
         }
 
-        Reply::_success('auth_success');
+        Reply::_success(Constant::AUTHENTICATION_SUCCESS);
     }
 
-    /**
-     * Valide les données utilisateur.
-     *
-     * @param array $data
-     * @throws \Exception
-     */
-    private function validateUserData(array $data): void
-    {
-        if (!Helper::isEmailFormatValid($data[Constant::EMAIL])) {
-            Reply::_error('invalid_email', 400);
-        }
 
-        if (!Helper::isCameroonianPhoneNumber($data[Constant::MOBILE])) {
-            Reply::_error('invalid_mobile', 400);
-        }
-    }
-
-    /**
-     * Récupère l'utilisateur par email ou mobile.
-     *
-     * @param array $data
-     * @return User|null
-     */
-    private function getUserByEmailOrMobile(array $data): ?User
-    {
-        if (!empty($data[Constant::MOBILE])) {
-            if (!Helper::isCameroonianPhoneNumber($data[Constant::MOBILE])) {
-                Reply::_error('invalid_mobile', 400);
-            }
-            return $this->userService->getUserByMobileOrEmail($data[Constant::MOBILE], null);
-        }
-
-        if (!Helper::isEmailFormatValid($data[Constant::EMAIL])) {
-            Reply::_error('invalid_email', 400);
-        }
-
-        return $this->userService->getUserByMobileOrEmail(null, $data[Constant::EMAIL]);
-    }
 }

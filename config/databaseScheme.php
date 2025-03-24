@@ -33,10 +33,12 @@ class DBInit
         CREATE TABLE IF NOT EXISTS account (
             id INT AUTO_INCREMENT PRIMARY KEY,
             token VARCHAR(100) NOT NULL UNIQUE, 
-            amount INT NOT NULL,
+            amount FLOAT NOT NULL,
             user INT NOT NULL, 
-            FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
-        ); 
+            FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
+        );
+ 
     ",
     ];
 

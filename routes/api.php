@@ -1,6 +1,9 @@
 <?php
 
 
+use App\Controllers\AccountController;
+use App\Controllers\TerminalController;
+use App\Middlewares\AuthMiddleware;
 use Helper\Reply;
 use App\Controllers\UserController;
 
@@ -12,30 +15,23 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 $parsedUrl = parse_url($requestUri, PHP_URL_PATH);
 
 $userController = new UserController();
-$terminalController = new \App\Controllers\TerminalController();
+$accountController = new AccountController();
+$terminalController = new TerminalController();
 
 switch (true) {
     case $parsedUrl === '/api/users' && $requestMethod === 'POST':
-        try {
+            AuthMiddleware::handle();
             $userController->saveUser();
-        } catch (Exception $e) {
-            Reply::_error($e->getMessage());
-        }
-        break;
     case $parsedUrl === '/api/auth' && $requestMethod === 'PUT':
-        try {
+        AuthMiddleware::handle();
             $userController->authUser();
-        } catch (Exception $e) {
-            Reply::_error($e->getMessage());
-        }
+    case $parsedUrl === '/balance' && $requestMethod === 'PUT':
+        AuthMiddleware::handle();
+            $accountController->getBalance();
         break;
     case $parsedUrl === '/terminal/' && $requestMethod === 'POST':
-        try {
             $terminalController->getBearerToken();
-        } catch (Exception $e) {
-            Reply::_error($e->getMessage());
-        }
         break;
 
-    default: Reply::_error('rout_not_found');
+    default: Reply::_error('rout_not_found',code: 404);
 }
