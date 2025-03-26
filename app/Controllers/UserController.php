@@ -93,7 +93,7 @@ class UserController
             Reply::_error(Constant::AUTHENTICATION_FAILED, 401);
         }
 
-        Reply::_success(Constant::AUTHENTICATION_SUCCESS);
+        Reply::_success($user->toArray());
     }
 
 
