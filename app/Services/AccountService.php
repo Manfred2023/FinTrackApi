@@ -22,4 +22,8 @@ class AccountService
     {
         return $this->accountRepository->getBanlanceByUserToken($token);
     }
+    public function getAccountByToken(string $token): ?Account
+    {
+        return $this->accountRepository->findByToken($token);
+    }
 }

@@ -1,0 +1,10 @@
+{
+  "user_token": "982555",
+  "survey_token": "100001",
+  "responses": [
+    { "question_token": "100001", "family": "radio", "response_radio": "100003" },
+    { "question_token": "100002", "family": "checkbox", "response_checkbox": ["100006", "100008"] },
+    { "question_token": "100003", "family": "stars", "response_stars": 4 },
+    { "question_token": "100004", "family": "longtext", "response_longtext": "Le service était bon, mais peut être amélioré." }
+  ]
+}

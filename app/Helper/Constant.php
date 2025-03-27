@@ -27,11 +27,17 @@ class Constant
     public const USER = "user";
     public const AMOUNT = "amount";
     public const ACCOUNT = "account";
+    public const MOTIF = "motif";
+    public const TYPE = "type";
     public const APP = "app";
+    public const NAME = "name";
     public const VERSION = "version";
 
     ///APP ERROR
     public const USER_NOT_FOUND = "user_not_found";
+    public const ACCOUNT_NOT_FOUND = "account_not_found";
+    public const MOTIF_ALREADY_EXIST = "motif_already_exist";
+    public const MOTIF_NOT_FOUND = "motif_not_found";
     public const INVALID_PIN = "invalid_pin";
     public const INVALID_NAME = "invalid_name";
     public const INVALID_EMAIL = "invalid_email";

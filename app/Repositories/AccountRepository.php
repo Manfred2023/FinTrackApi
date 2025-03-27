@@ -79,4 +79,17 @@ class AccountRepository
         }
 
     }
+
+    public function findById(string $id): ?Account
+    {
+        $userBean = R::findOne(self::TABLE, 'id = ?', [$id]);
+
+        return ($userBean) ? self::_toObject($userBean) : null;
+    }
+    public function findByToken(string $token): ?Account
+    {
+        $accountBean = R::findOne(self::TABLE, 'token = ?', [$token]);
+
+        return ($accountBean) ? self::_toObject($accountBean) : null;
+    }
 }

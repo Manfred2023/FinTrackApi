@@ -2,6 +2,8 @@
 
 
 use App\Controllers\AccountController;
+use App\Controllers\MotifController;
+use App\Controllers\Survey;
 use App\Controllers\TerminalController;
 use App\Middlewares\AuthMiddleware;
 use Helper\Reply;
@@ -17,6 +19,8 @@ $parsedUrl = parse_url($requestUri, PHP_URL_PATH);
 $userController = new UserController();
 $accountController = new AccountController();
 $terminalController = new TerminalController();
+$motifController = new MotifController();
+$surveyController = new  Survey();
 
 switch (true) {
     case $parsedUrl === '/api/users' && $requestMethod === 'POST':
@@ -31,6 +35,18 @@ switch (true) {
         break;
     case $parsedUrl === '/terminal/' && $requestMethod === 'POST':
             $terminalController->getBearerToken();
+        break;
+    case $parsedUrl === '/motif/create' && $requestMethod === 'POST':
+        AuthMiddleware::handle();
+            $motifController->createMotif();
+        break;
+    case $parsedUrl === '/motif/' && $requestMethod === 'PUT':
+        AuthMiddleware::handle();
+            $motifController->getAllMotif();
+        break;
+        case $parsedUrl === '/api/survey' && $requestMethod === 'GET':
+
+            $surveyController->getSurvey();
         break;
 
     default: Reply::_error('rout_not_found',code: 404);

@@ -38,8 +38,21 @@ class DBInit
             FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
             created TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
         );
- 
     ",
+        'motif' => "
+        CREATE TABLE IF NOT EXISTS motif (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            token INT NOT NULL UNIQUE, 
+            name VARCHAR(100) NOT NULL UNIQUE, 
+            type ENUM('spend', 'income') NOT NULL, 
+            account INT NOT NULL, 
+            FOREIGN KEY (account) REFERENCES account(id) ON DELETE CASCADE,
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
+        );
+
+    "
+
+
     ];
 
 

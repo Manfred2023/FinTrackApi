@@ -90,9 +90,6 @@ class UserRepository
         return ($userBean) ? self::_toObject($userBean) : null;
 
     }
-
-
-
     public function delete(int $id): bool
     {
         $user = R::load(self::TABLE, $id);
