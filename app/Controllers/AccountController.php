@@ -31,5 +31,11 @@ class AccountController
         Reply::_success($result->toArray());
 
     }
+    public function getAllAccount(): void
+    {
+        $result = $this->accountService->getAllAccount( );
+        Reply::_success($result);
+
+    }
 
 }

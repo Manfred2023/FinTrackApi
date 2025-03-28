@@ -32,11 +32,15 @@ class Constant
     public const APP = "app";
     public const NAME = "name";
     public const VERSION = "version";
+    public const CONTACT = "contact";
+    public const LOCATION = "location";
 
     ///APP ERROR
     public const USER_NOT_FOUND = "user_not_found";
     public const ACCOUNT_NOT_FOUND = "account_not_found";
+    public const CONTACT_NOT_FOUND = "contact_not_found";
     public const MOTIF_ALREADY_EXIST = "motif_already_exist";
+    public const CONTACT_ALREADY_EXIST = "contact_already_exist";
     public const MOTIF_NOT_FOUND = "motif_not_found";
     public const INVALID_PIN = "invalid_pin";
     public const INVALID_NAME = "invalid_name";

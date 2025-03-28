@@ -50,6 +50,43 @@ class DBInit
             created TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
         );
 
+    ",
+        'contact' => "
+        CREATE TABLE IF NOT EXISTS contact (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            token INT NOT NULL UNIQUE, 
+            name VARCHAR(100) NOT NULL  , 
+            mobile VARCHAR(255) NOT NULL UNIQUE, 
+            location VARCHAR(100),  
+            account INT NOT NULL, 
+            FOREIGN KEY (account) REFERENCES account(id) ON DELETE CASCADE,
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
+        );
+
+    ",
+        'status' => "
+        CREATE TABLE IF NOT EXISTS status (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            token INT NOT NULL UNIQUE, 
+            name VARCHAR(100) NOT NULL  , 
+            isdone BOOLEAN DEFAULT FALSE, 
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
+        );
+
+    ",
+        'loan' => "
+        CREATE TABLE IF NOT EXISTS loan (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            token INT NOT NULL UNIQUE, 
+            amount INT NOT NULL, 
+            isdone BOOLEAN DEFAULT FALSE, 
+            isloan BOOLEAN DEFAULT FALSE, 
+            contact INT NOT NULL, 
+            updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (contact) REFERENCES contact(id) ON DELETE CASCADE 
+        );
+
     "
 
 

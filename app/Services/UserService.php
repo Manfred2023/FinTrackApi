@@ -30,6 +30,10 @@ class UserService
     {
         return $this->userRepository->getUserByMobileOrEmail($mobile,$email);
     }
+    public  function getAllUser(): ? array
+    {
+        return $this->userRepository->getAllUser();
+    }
 
 
 

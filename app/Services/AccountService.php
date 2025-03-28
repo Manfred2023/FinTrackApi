@@ -26,4 +26,8 @@ class AccountService
     {
         return $this->accountRepository->findByToken($token);
     }
+    public function getAllAccount( ): ?array
+    {
+        return $this->accountRepository->getAllAccount();
+    }
 }

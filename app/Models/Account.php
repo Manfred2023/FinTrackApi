@@ -67,6 +67,7 @@ class Account
     public function toArray(): array
     {
         return [
+            Constant::TOKEN => $this->token,
             Constant::AMOUNT => $this->getAmount(),
             Constant::USER => $this->getUser()->getNickname(),
         ];

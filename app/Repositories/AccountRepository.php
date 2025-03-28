@@ -64,7 +64,18 @@ class AccountRepository
         }
         return null;
     }
+    public function findById(string $id): ?Account
+    {
+        $userBean = R::findOne(self::TABLE, 'id = ?', [$id]);
 
+        return ($userBean) ? self::_toObject($userBean) : null;
+    }
+    public function findByToken(string $token): ?Account
+    {
+        $accountBean = R::findOne(self::TABLE, 'token = ?', [$token]);
+
+        return ($accountBean) ? self::_toObject($accountBean) : null;
+    }
     public function getBanlanceByUserToken(string $token)
     {
         try {
@@ -79,17 +90,15 @@ class AccountRepository
         }
 
     }
-
-    public function findById(string $id): ?Account
+    public function getAllAccount( ): ?array
     {
-        $userBean = R::findOne(self::TABLE, 'id = ?', [$id]);
-
-        return ($userBean) ? self::_toObject($userBean) : null;
+        $userBean = R::findAll(self::TABLE);
+        foreach ($userBean as $bean)
+            if ($item = self::_toObject($bean))
+                $contacts[] = $item->toArray();
+        return $contacts ?? [];
     }
-    public function findByToken(string $token): ?Account
-    {
-        $accountBean = R::findOne(self::TABLE, 'token = ?', [$token]);
 
-        return ($accountBean) ? self::_toObject($accountBean) : null;
-    }
+
+
 }

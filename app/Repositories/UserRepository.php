@@ -99,4 +99,13 @@ class UserRepository
         }
         return false;
     }
+
+    public function getAllUser( ): ?array
+    {
+        $userBean = R::findAll(self::TABLE);
+        foreach ($userBean as $bean)
+            if ($item = self::_toObject($bean))
+                $contacts[] = $item->toArray();
+        return $contacts ?? [];
+    }
 }

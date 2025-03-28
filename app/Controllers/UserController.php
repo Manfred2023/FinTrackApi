@@ -95,6 +95,11 @@ class UserController
 
         Reply::_success($user->toArray());
     }
+  public function getAllUser(): void
+    {
+        $result = $this->userService->getAllUser();
+        Reply::_success($result);
+    }
 
 
 }

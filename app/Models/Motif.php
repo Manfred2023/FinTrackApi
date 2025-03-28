@@ -80,6 +80,8 @@ class Motif
     public function toArray(): array
     {
         return [
+            Constant::TYPE=>$this->getType(),
+            Constant::TOKEN=>$this->token,
             Constant::MOTIF => $this->getName(),
         ];
     }

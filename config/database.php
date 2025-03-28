@@ -30,7 +30,7 @@ class Database
 
             try {
                 R::setup("mysql:host=$host;dbname=$dbname", $user, $password);
-                R::freeze(true); // Empêche la modification automatique des tables
+                R::freeze(true);
                 self::$instance = R::getDatabaseAdapter();
             } catch (Exception $e) {
                 die("Erreur de connexion à la base de données : " . $e->getMessage());

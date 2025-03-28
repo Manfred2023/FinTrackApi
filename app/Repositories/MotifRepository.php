@@ -75,7 +75,7 @@ class MotifRepository
 
         foreach ($accountBean as $bean)
 
-            if (($item = self::_toObject($bean)) instanceof self)
+            if ($item = self::_toObject($bean))
                 $contacts[] = $item->toArray();
         return $contacts ?? [];
 
