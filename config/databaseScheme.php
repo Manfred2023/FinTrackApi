@@ -87,6 +87,20 @@ class DBInit
             FOREIGN KEY (contact) REFERENCES contact(id) ON DELETE CASCADE 
         );
 
+    ",
+        'journalentry' => "
+        CREATE TABLE IF NOT EXISTS journalentry (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            token INT NOT NULL UNIQUE, 
+            loan INT NULL, 
+            motif INT NOT NULL, 
+            amount INT NOT NULL,  
+            updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (loan) REFERENCES loan(id) ON DELETE CASCADE, 
+            FOREIGN KEY (motif) REFERENCES motif(id) ON DELETE CASCADE 
+        );
+
     "
 
 

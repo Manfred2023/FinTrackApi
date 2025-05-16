@@ -49,7 +49,7 @@
       "position": 4,
       "required": false,
       "family": "longtext",
-      "responses": []
+      "responses": "longtext"
     }
   ]
 }

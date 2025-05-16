@@ -2,9 +2,9 @@
   "user_token": "982555",
   "survey_token": "100001",
   "responses": [
-    { "question_token": "100001", "family": "radio", "response_radio": "100003" },
-    { "question_token": "100002", "family": "checkbox", "response_checkbox": ["100006", "100008"] },
-    { "question_token": "100003", "family": "stars", "response_stars": 4 },
-    { "question_token": "100004", "family": "longtext", "response_longtext": "Le service était bon, mais peut être amélioré." }
+    { "question_token": "100001", "family": "radio", "response_radio": "100003","response_checkbox": null,"response_stars": null,"response_longtext" : null },
+    { "question_token": "100002", "family": "checkbox", "response_radio": null ,"response_checkbox": ["100006", "100008"],"response_stars": null,"response_longtext" : null },
+    { "question_token": "100003", "family": "stars", "response_radio": null,"response_checkbox": null, "response_stars": 4,"response_longtext" : null },
+    { "question_token": "100004", "family": "longtext","response_radio": null,"response_checkbox": null, "response_stars": null, "response_longtext": "Le service etait bon, mais peut être ameliore." }
   ]
 }

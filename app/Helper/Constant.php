@@ -26,8 +26,12 @@ class Constant
     public const BLOCKED = "blocked";
     public const USER = "user";
     public const AMOUNT = "amount";
+    public const ISDONE = "isdone";
+    public const ISLOAN = "isloan";
+    public const LOAN = "loan";
     public const ACCOUNT = "account";
     public const MOTIF = "motif";
+    public const DATE = "create";
     public const TYPE = "type";
     public const APP = "app";
     public const NAME = "name";
@@ -44,8 +48,8 @@ class Constant
     public const MOTIF_NOT_FOUND = "motif_not_found";
     public const INVALID_PIN = "invalid_pin";
     public const INVALID_NAME = "invalid_name";
-    public const INVALID_EMAIL = "invalid_email";
-    public const INVALID_MOBILE = "invalid_mobile";
+        public const INVALID_EMAIL = "invalid_email";
+        public const INVALID_MOBILE = "invalid_mobile";
     public const MOBILE_ALREADY_USED = "mobile_already_used";
     public const EMAIL_ALREADY_USED = "email_already_used";
     public const AUTHENTICATION_FAILED = "authentication_failed";
